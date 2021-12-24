@@ -4,10 +4,20 @@ from typing import Optional as Opt
 class Node:
     def __init__(self, val: int):
         self.val = val
+        self.prev: Opt["Node"] = None
         self.next: Opt["Node"] = None
 
     def __repr__(self) -> str:
-        return f"{self.val} -> {self.next}"
+        try:
+            next_val = self.next.val
+        except AttributeError:
+            next_val = None
+        try:
+            prev_val = self.prev.val
+        except AttributeError:
+            prev_val = None
+
+        return f"{prev_val} -> {self.val} -> {next_val}"
 
 
 class MyLinkedList:
@@ -15,7 +25,14 @@ class MyLinkedList:
         self.head = None
 
     def __repr__(self) -> str:
-        return repr(self.head)
+        out = []
+        curr = self.head
+
+        while curr is not None:
+            out.append(repr(curr))
+            curr = curr.next
+
+        return str(out)
 
     def get(self, index: int) -> int:
         curr = self.head
@@ -36,8 +53,14 @@ class MyLinkedList:
 
     def addAtHead(self, val: int) -> None:
         old_head = self.head
+
+        if old_head is None:
+            self.head = Node(val)
+            return
+
         self.head = Node(val)
         self.head.next = old_head
+        old_head.prev = self.head
 
     def addAtTail(self, val: int) -> None:
         curr = self.head
@@ -49,7 +72,9 @@ class MyLinkedList:
         while curr.next is not None:
             curr = curr.next
 
-        curr.next = Node(val)
+        new_node = Node(val)
+        curr.next = new_node
+        new_node.prev = curr
 
     def addAtIndex(self, index: int, val: int) -> None:
         curr = self.head
@@ -69,8 +94,13 @@ class MyLinkedList:
             for _ in range(index):
                 prev, curr = curr, curr.next
 
-            prev.next = Node(val)
-            prev.next.next = curr
+            new_node = Node(val)
+            prev.next = new_node
+            new_node.next = curr
+
+            curr.prev = new_node
+            new_node.prev = prev
+
         except AttributeError:
             return
 
@@ -89,5 +119,6 @@ class MyLinkedList:
                 prev, curr = curr, curr.next
 
             prev.next = curr.next
+            curr.next.prev = prev
         except AttributeError:
             return
