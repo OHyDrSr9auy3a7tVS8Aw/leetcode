@@ -3,46 +3,24 @@
 #     def __init__(self, val=0, next=None):
 #         self.val = val
 #         self.next = next
-
-from copy import deepcopy
-
 class Solution:
-    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
-
-        a = 0
-        b = 0
+    def addTwoNumbers(self, l1: Optional[ListNode], l2: Optional[ListNode]) -> Optional[ListNode]:
+        # sentinel head
+        ans = ans_head = ListNode(None)
         
-        place = 1
-        while True:
-            a += l1.val * place
-            place *= 10
-            l1 = l1.next
-            if l1 is None:
-                break
+        carry = 0
+        while l1 or l2 or carry:
+            l1val = l1.val if l1 else 0
+            l2val = l2.val if l2 else 0
+            
+            l1 = l1.next if l1 else None
+            l2 = l2.next if l2 else None
                 
-        place = 1      
-        while True:
-            b += l2.val * place
-            place *= 10
-            l2 = l2.next
-            if l2 is None:
-                break
+            sum_ = l1val + l2val + carry
+            carry, out = divmod(sum_, 10)
                 
-                
-        c = a + b
-        print(a, b, c)
-
-        c = [int(i) for i in list(str(c))]
-        print(c)
-        
-        l3 = ListNode(c[0])
-            
-        for s in c[1:]:
-            print(l3)
-            l3.next = deepcopy(l3)
-            l3.val = s
-            
-        return l3
+            ans.next = ListNode(out)
+            ans = ans.next
             
             
-        
+        return ans_head.next
